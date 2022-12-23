@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-
+# As shell script:
 
 # $ DATASET_PATH=/path/to/dataset
 
@@ -20,6 +20,7 @@ import subprocess
 #     --output_path $DATASET_PATH/sparse
 
 # $ mkdir $DATASET_PATH/dense
+
 def run_colmap(basedir, match_type):
     
     logfile_name = os.path.join(basedir, 'colmap_output.txt')
@@ -44,35 +45,34 @@ def run_colmap(basedir, match_type):
             '--database_path', os.path.join(basedir, 'database.db'), 
     ]
 
-    match_output = ( subprocess.check_output(exhaustive_matcher_args, universal_newlines=True) )
-    logfile.write(match_output)
+    match_output = subprocess.run(exhaustive_matcher_args,
+                                  capture_output=True,
+                                  text=True,
+                                  universal_newlines=True)
+    logfile.write(str(match_output))
     print('Features matched')
     
     p = os.path.join(basedir, 'sparse')
     if not os.path.exists(p):
         os.makedirs(p)
 
-    # mapper_args = [
-    #     'colmap', 'mapper', 
-    #         '--database_path', os.path.join(basedir, 'database.db'), 
-    #         '--image_path', os.path.join(basedir, 'images'),
-    #         '--output_path', os.path.join(basedir, 'sparse'),
-    #         '--Mapper.num_threads', '16',
-    #         '--Mapper.init_min_tri_angle', '4',
-    # ]
     mapper_args = [
         'colmap', 'mapper',
             '--database_path', os.path.join(basedir, 'database.db'),
             '--image_path', os.path.join(basedir, 'images'),
-            '--output_path', os.path.join(basedir, 'sparse'), # --export_path changed to --output_path in colmap 3.6
+            '--output_path', os.path.join(basedir, 'sparse'),
+            # --export_path changed to --output_path in colmap 3.6
             '--Mapper.num_threads', '16',
             '--Mapper.init_min_tri_angle', '4',
             '--Mapper.multiple_models', '0',
             '--Mapper.extract_colors', '0',
     ]
 
-    map_output = ( subprocess.check_output(mapper_args, universal_newlines=True) )
-    logfile.write(map_output)
+    map_output = subprocess.run(mapper_args,
+                                capture_output=True,
+                                text=True,
+                                universal_newlines=True)
+    logfile.write(str(map_output))
     logfile.close()
     print('Sparse map created')
     
