@@ -24,8 +24,8 @@ import subprocess
 def run_colmap(basedir, match_type, use_gpu, num_threads):
     
     logfile_name = os.path.join(basedir, 'colmap_output.txt')
+
     logfile = open(logfile_name, 'w')
-    
     feature_extractor_args = [
         'colmap', 'feature_extractor', 
             '--database_path', os.path.join(basedir, 'database.db'), 
@@ -33,31 +33,32 @@ def run_colmap(basedir, match_type, use_gpu, num_threads):
             '--ImageReader.single_camera', '1',
             '--SiftExtraction.use_gpu', use_gpu
     ]
-    feat_output = subprocess.run(feature_extractor_args,
-                                 capture_output=True,
-                                 text=True,
-                                 universal_newlines=True)
-    logfile.write(str(feat_output))
+    feat_output = subprocess.Popen(feature_extractor_args,
+                                   stdout = subprocess.PIPE) 
+    for line in iter(feat_output.stdout.readline, b''):
+        logfile.write(line.decode('utf-8'))
     print('Features extracted')
+    logfile.close()
 
+    logfile = open(logfile_name, 'a')
     exhaustive_matcher_args = [
         'colmap', match_type, 
             '--database_path', os.path.join(basedir, 'database.db'), 
             '--SiftMatching.num_threads', num_threads,
             '--SiftMatching.use_gpu', use_gpu
     ]
-
-    match_output = subprocess.run(exhaustive_matcher_args,
-                                  capture_output=True,
-                                  text=True,
-                                  universal_newlines=True)
-    logfile.write(str(match_output))
+    match_output = subprocess.Popen(exhaustive_matcher_args,
+                                    stdout = subprocess.PIPE)
+    for line in iter(match_output.stdout.readline, b''):
+        logfile.write(line.decode('utf-8'))
     print('Features matched')
+    logfile.close()
     
     p = os.path.join(basedir, 'sparse')
     if not os.path.exists(p):
         os.makedirs(p)
 
+    logfile = open(logfile_name, 'a')
     mapper_args = [
         'colmap', 'mapper',
             '--database_path', os.path.join(basedir, 'database.db'),
@@ -69,14 +70,12 @@ def run_colmap(basedir, match_type, use_gpu, num_threads):
             '--Mapper.multiple_models', '0',
             '--Mapper.extract_colors', '0',
     ]
-
-    map_output = subprocess.run(mapper_args,
-                                capture_output=True,
-                                text=True,
-                                universal_newlines=True)
-    logfile.write(str(map_output))
-    logfile.close()
+    map_output = subprocess.Popen(mapper_args,
+                                  stdout = subprocess.PIPE)
+    for line in iter(map_output.stdout.readline, b''):
+        logfile.write(line.decode('utf-8'))
     print('Sparse map created')
+    logfile.close()
     
     print( 'Finished running COLMAP, see {} for logs'.format(logfile_name) )
 

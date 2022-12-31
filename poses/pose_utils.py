@@ -4,8 +4,8 @@ import sys
 import imageio
 import skimage.transform
 
-from llff.poses.colmap_wrapper import run_colmap
-import llff.poses.colmap_read_model as read_model
+from poses.colmap_wrapper import run_colmap
+import poses.colmap_read_model as read_model
 
 def save_views(realdir,names):
     with open(os.path.join(realdir,'view_imgs.txt'), mode='w') as f:
