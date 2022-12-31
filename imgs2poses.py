@@ -3,13 +3,28 @@ import sys
 
 import argparse
 parser = argparse.ArgumentParser()
+
 parser.add_argument('--match_type', type = str, 
                     default = 'exhaustive_matcher',
                     help = 'type of matcher used. Valid options: \
                             exhaustive_matcher sequential_matcher. \
                             Other matchers not supported at this time')
+
+parser.add_argument('--use_gpu', type = str,
+                    default = '0',
+                    choices=['0', '1'],
+                    help = 'whether to use GPU acceleration for \
+                    COLMAP feature extraction and matching. Valid options: \
+                    enable 1, disable 0. (Default 0)')
+
+parser.add_argument('--num_threads', type = str,
+                    default = '30',
+                    help = 'Number of CPU threads to use for \
+                    COLMAP feature extraction and matching.')
+
 parser.add_argument('scenedir', type = str,
                     help = 'input scene directory')
+
 args = parser.parse_args()
 
 if args.match_type != 'exhaustive_matcher' and \
@@ -19,4 +34,4 @@ if args.match_type != 'exhaustive_matcher' and \
     sys.exit()
 
 if __name__=='__main__':
-    gen_poses(args.scenedir, args.match_type)
+    gen_poses(args.scenedir, args.match_type, args.use_gpu, args.num_threads)

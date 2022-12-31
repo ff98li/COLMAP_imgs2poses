@@ -21,7 +21,7 @@ import subprocess
 
 # $ mkdir $DATASET_PATH/dense
 
-def run_colmap(basedir, match_type):
+def run_colmap(basedir, match_type, use_gpu, num_threads):
     
     logfile_name = os.path.join(basedir, 'colmap_output.txt')
     logfile = open(logfile_name, 'w')
@@ -31,7 +31,7 @@ def run_colmap(basedir, match_type):
             '--database_path', os.path.join(basedir, 'database.db'), 
             '--image_path', os.path.join(basedir, 'images'),
             '--ImageReader.single_camera', '1',
-            '--SiftExtraction.use_gpu', '1'
+            '--SiftExtraction.use_gpu', use_gpu
     ]
     feat_output = subprocess.run(feature_extractor_args,
                                  capture_output=True,
@@ -43,6 +43,8 @@ def run_colmap(basedir, match_type):
     exhaustive_matcher_args = [
         'colmap', match_type, 
             '--database_path', os.path.join(basedir, 'database.db'), 
+            '--SiftMatching.num_threads', num_threads,
+            '--SiftMatching.use_gpu', use_gpu
     ]
 
     match_output = subprocess.run(exhaustive_matcher_args,
@@ -62,7 +64,7 @@ def run_colmap(basedir, match_type):
             '--image_path', os.path.join(basedir, 'images'),
             '--output_path', os.path.join(basedir, 'sparse'),
             # --export_path changed to --output_path in colmap 3.6
-            '--Mapper.num_threads', '16',
+            '--Mapper.num_threads', num_threads,
             '--Mapper.init_min_tri_angle', '4',
             '--Mapper.multiple_models', '0',
             '--Mapper.extract_colors', '0',
