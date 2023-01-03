@@ -22,6 +22,10 @@ parser.add_argument('--num_threads', type = str,
                     help = 'Number of CPU threads to use for \
                     COLMAP feature extraction and matching.')
 
+parser.add_argument('--camera_model', type = str,
+                    default = 'PINHOLE',
+                    help = '')
+
 parser.add_argument('scenedir', type = str,
                     help = 'input scene directory')
 

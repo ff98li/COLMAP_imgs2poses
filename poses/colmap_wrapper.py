@@ -65,10 +65,10 @@ def run_colmap(basedir, match_type, use_gpu, num_threads):
             '--image_path', os.path.join(basedir, 'images'),
             '--output_path', os.path.join(basedir, 'sparse'),
             # --export_path changed to --output_path in colmap 3.6
-            '--Mapper.num_threads', num_threads,
-            '--Mapper.init_min_tri_angle', '4',
-            '--Mapper.multiple_models', '0',
-            '--Mapper.extract_colors', '0',
+            #'--Mapper.init_min_tri_angle', '4',
+            #'--Mapper.multiple_models', '0',
+            #'--Mapper.extract_colors', '0',
+            '--Mapper.num_threads', num_threads
     ]
     map_output = subprocess.Popen(mapper_args,
                                   stdout = subprocess.PIPE)
