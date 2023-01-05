@@ -21,7 +21,7 @@ import subprocess
 
 # $ mkdir $DATASET_PATH/dense
 
-def run_colmap(basedir, match_type, use_gpu, num_threads):
+def run_colmap(basedir, match_type, use_gpu, num_threads, camera_model):
     
     logfile_name = os.path.join(basedir, 'colmap_output.txt')
 
@@ -31,6 +31,7 @@ def run_colmap(basedir, match_type, use_gpu, num_threads):
             '--database_path', os.path.join(basedir, 'database.db'), 
             '--image_path', os.path.join(basedir, 'images'),
             '--ImageReader.single_camera', '1',
+            '--ImageReader.camera_model', camera_model,
             '--SiftExtraction.use_gpu', use_gpu
     ]
     feat_output = subprocess.Popen(feature_extractor_args,
@@ -67,7 +68,7 @@ def run_colmap(basedir, match_type, use_gpu, num_threads):
             # --export_path changed to --output_path in colmap 3.6
             #'--Mapper.init_min_tri_angle', '4',
             #'--Mapper.multiple_models', '0',
-            #'--Mapper.extract_colors', '0',
+            '--Mapper.extract_colors', '0',
             '--Mapper.num_threads', num_threads
     ]
     map_output = subprocess.Popen(mapper_args,

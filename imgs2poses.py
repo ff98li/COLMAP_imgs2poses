@@ -23,8 +23,9 @@ parser.add_argument('--num_threads', type = str,
                     COLMAP feature extraction and matching.')
 
 parser.add_argument('--camera_model', type = str,
-                    default = 'PINHOLE',
-                    help = '')
+                    default = 'SIMPLE_RADIAL',
+                    choices=['SIMPLE_RADIAL', 'SIMPLE_PINHOLE', 'PINHOLE', 'RADIAL', 'OPENCV', 'FULL_OPENCV'],
+                    help = 'Camera model for feature extraction (default SIMPLE_RADIAL)')
 
 parser.add_argument('scenedir', type = str,
                     help = 'input scene directory')
@@ -38,4 +39,4 @@ if args.match_type != 'exhaustive_matcher' and \
     sys.exit()
 
 if __name__=='__main__':
-    gen_poses(args.scenedir, args.match_type, args.use_gpu, args.num_threads)
+    gen_poses(args.scenedir, args.match_type, args.use_gpu, args.num_threads, args.camera_model)
